@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using Azure.Core;
+using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Configuration;
 using MudBlazor;
 using System.Net.Http;
@@ -11,6 +12,10 @@ public partial class Home
 {
     private MudForm form;
     private string searchText;
+    private string apikey;
+    private string? localName;
+    private string? state;
+    private float temp;
     [Inject]
     public IHttpClientFactory _httpClientFactory { get; set; }
 
@@ -19,7 +24,7 @@ public partial class Home
 
     protected override void OnInitialized()
     {
-        
+         apikey = _config.GetValue<string>("apikey");
     }
 
     private async void Submit ()
@@ -28,7 +33,6 @@ public partial class Home
         if (form.IsValid)
         {
             using var _httpClient = _httpClientFactory.CreateClient();
-            Console.WriteLine("submitted");
 
             string? apikey = _config.GetValue<string>("apikey");
 
@@ -41,12 +45,30 @@ public partial class Home
             City[]? myDeserializedClass = await response.Content.ReadFromJsonAsync<City[]>();
 
             string? cityKey = myDeserializedClass[0].Key;
-
-
+            localName = myDeserializedClass[0].LocalizedName;
+            state = myDeserializedClass[0].AdministrativeArea.LocalizedName;
+            await Task.Delay(500);
+            CurrentConditions(cityKey);
         }
         else
         {
             Console.WriteLine("not submitted");
         }
+    }
+
+    private async void CurrentConditions(string CityKey)
+    {
+        using var _httpClient = _httpClientFactory.CreateClient();
+
+        var request = new HttpRequestMessage();
+        request.RequestUri = new Uri($"http://dataservice.accuweather.com/currentconditions/v1/{CityKey}?apikey={apikey}");
+        request.Method = HttpMethod.Get;
+
+        var response = await _httpClient.SendAsync(request);
+
+        CurrentConditions[]? deserializedConditions = await response.Content.ReadFromJsonAsync<CurrentConditions[]>();
+
+        temp = deserializedConditions[0].Temperature.Imperial.Value;
+        StateHasChanged();
     }
 }

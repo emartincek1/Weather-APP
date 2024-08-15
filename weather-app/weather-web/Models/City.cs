@@ -66,20 +66,6 @@ public class Elevation
     public Imperial Imperial { get; set; }
 }
 
-public class Metric
-{
-    public float Value { get; set; }
-    public string Unit { get; set; }
-    public int UnitType { get; set; }
-}
-
-public class Imperial
-{
-    public float Value { get; set; }
-    public string Unit { get; set; }
-    public int UnitType { get; set; }
-}
-
 public class Supplementaladminarea
 {
     public int Level { get; set; }
