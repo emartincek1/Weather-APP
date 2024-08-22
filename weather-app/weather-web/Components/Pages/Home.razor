@@ -1,15 +1,18 @@
 ﻿@page "/"
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Current Conditions</PageTitle>
+
+<MudText Typo="Typo.h3" GutterBottom="true">Current Conditions</MudText>
 
 <MudForm @ref="form">
     <MudTextField T="string" @bind-Value="searchText" Label="City" Required="true" RequiredError="City is required!" />
     <MudButton OnClick="(() => Submit())" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Search</MudButton>
 </MudForm>
+
 @if (localName != null)
 {
     <MudContainer>
-        <MudCard>
+        <MudCard Outlined="true">
             <MudCardContent>
                 <MudText>@localName, @state</MudText>
                 <MudText Typo="Typo.body2" >@temp°F</MudText>
