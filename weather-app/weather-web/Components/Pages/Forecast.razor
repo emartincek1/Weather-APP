@@ -1,0 +1,45 @@
+﻿@page "/forecast"
+@using Microsoft.AspNetCore.Authorization
+
+@attribute [Authorize]
+
+<PageTitle>Forecast</PageTitle>
+
+<MudText Typo="Typo.h3" GutterBottom="true">5-Day Forecast</MudText>
+
+<MudForm @ref="form">
+    <MudTextField T="string" @bind-Value="searchText" Label="City" Required="true" RequiredError="City is required!" />
+    <MudButton OnClick="(() => Submit())" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Search</MudButton>
+</MudForm>
+
+
+
+
+@if (localName != null)
+{
+    <MudText Typo="Typo.h5">@localName, @state</MudText>
+    <MudGrid Spacing="10" Justify="Justify.Center">
+        @foreach (var forecast in dailyForecasts)
+        {
+            <MudItem>
+                <MudPaper Class="pa-8 ma-2" Width="200px">
+                    <MudText Class="ma-3">
+                        @forecast.Date.ToShortDateString()
+                    </MudText>
+                    <MudText Class="ma-3">
+                        High: @forecast.Temperature.Maximum.Value°F
+                    </MudText>
+                    <MudText Class="ma-3">
+                        Low: @forecast.Temperature.Minimum.Value°F
+                    </MudText>
+                    <MudText>
+                        Description: @forecast.Day.IconPhrase
+                    </MudText>
+                    
+                </MudPaper>
+            </MudItem>
+        }
+        
+    </MudGrid>
+    
+}
